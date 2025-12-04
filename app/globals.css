@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.maateen.me/kalpurush/font.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 248, 250, 252;
+  --background-end-rgb: 241, 245, 249;
+}
+
+.dark {
+  --foreground-rgb: 248, 250, 252;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 30, 41, 59;
+}
+
+@layer base {
+  * {
+    @apply border-slate-200 dark:border-slate-700;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800;
+    @apply text-slate-900 dark:text-slate-100;
+    @apply antialiased;
+    font-family: 'Space Grotesk', 'Kalpurush', system-ui, sans-serif;
+  }
+
+  /* Bangla text styling */
+  .bangla-text {
+    font-family: 'Kalpurush', 'Noto Sans Bengali', sans-serif;
+    line-height: 1.8;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Card */
+  .glass-card {
+    @apply bg-white/70 dark:bg-slate-800/70;
+    @apply backdrop-blur-xl;
+    @apply border border-white/20 dark:border-slate-700/50;
+    @apply shadow-xl;
+    @apply rounded-3xl;
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500;
+    @apply bg-clip-text text-transparent;
+  }
+
+  .gradient-text-warm {
+    @apply bg-gradient-to-r from-bangla-orange-500 via-bangla-pink-500 to-bangla-purple-500;
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* Animated Gradient Background */
+  .animated-gradient-bg {
+    background: linear-gradient(
+      -45deg,
+      #a855f7,
+      #ec4899,
+      #06b6d4,
+      #f97316,
+      #14b8a6
+    );
+    background-size: 400% 400%;
+    animation: gradient-xy 15s ease infinite;
+  }
+
+  /* Glow Button */
+  .glow-button {
+    @apply relative overflow-hidden;
+    @apply bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500;
+    @apply text-white font-semibold;
+    @apply px-8 py-4 rounded-2xl;
+    @apply shadow-lg hover:shadow-2xl;
+    @apply transform hover:scale-105;
+    @apply transition-all duration-300;
+  }
+
+  .glow-button::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-bangla-purple-400 via-bangla-pink-400 to-bangla-cyan-400;
+    @apply opacity-0 hover:opacity-100;
+    @apply transition-opacity duration-300;
+    z-index: -1;
+  }
+
+  .glow-button::after {
+    content: '';
+    @apply absolute -inset-1;
+    @apply bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500;
+    @apply rounded-2xl blur-lg opacity-50;
+    z-index: -2;
+  }
+
+  /* Mic Button Pulse */
+  .mic-pulse {
+    @apply relative;
+  }
+
+  .mic-pulse::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    @apply bg-bangla-pink-500/50;
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Floating Animation */
+  .float-element {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-element-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  /* Feature Card */
+  .feature-card {
+    @apply glass-card p-6;
+    @apply hover:scale-105 hover:shadow-2xl;
+    @apply transition-all duration-300;
+    @apply cursor-pointer;
+  }
+
+  /* Upload Zone */
+  .upload-zone {
+    @apply border-2 border-dashed border-bangla-purple-400/50;
+    @apply bg-gradient-to-br from-bangla-purple-50/50 to-bangla-pink-50/50;
+    @apply dark:from-bangla-purple-900/20 dark:to-bangla-pink-900/20;
+    @apply rounded-3xl;
+    @apply hover:border-bangla-pink-500 hover:bg-bangla-pink-50/30;
+    @apply dark:hover:bg-bangla-pink-900/30;
+    @apply transition-all duration-300;
+  }
+
+  /* Shimmer effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Pill Button */
+  .pill-button {
+    @apply px-4 py-2 rounded-full;
+    @apply bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100;
+    @apply dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50;
+    @apply text-bangla-purple-700 dark:text-bangla-purple-300;
+    @apply hover:from-bangla-purple-200 hover:to-bangla-pink-200;
+    @apply dark:hover:from-bangla-purple-800/50 dark:hover:to-bangla-pink-800/50;
+    @apply transition-all duration-200;
+    @apply text-sm font-medium;
+  }
+
+  /* Navbar Blur */
+  .navbar-blur {
+    @apply bg-white/80 dark:bg-slate-900/80;
+    @apply backdrop-blur-xl;
+    @apply border-b border-white/20 dark:border-slate-700/50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-bangla-purple-400/50 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-bangla-purple-500/70;
+  }
+}
+
+/* Keyframes */
+@keyframes gradient-xy {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Selection styling */
+::selection {
+  @apply bg-bangla-pink-500/30;
+}
+
