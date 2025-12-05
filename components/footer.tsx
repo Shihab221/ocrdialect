@@ -138,9 +138,8 @@ export function Footer() {
               © ২০২৪ বাংলা বলে। সর্বস্বত্ব সংরক্ষিত।
             </p>
             <p className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-              Made with
-              <Heart className="w-4 h-4 text-bangla-pink-500 fill-bangla-pink-500" />
-              for Bangla speakers
+              Powered by SWARDVERSE
+              
             </p>
           </div>
         </div>

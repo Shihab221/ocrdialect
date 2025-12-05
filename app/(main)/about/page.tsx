@@ -61,22 +61,22 @@ const values = [
 
 const team = [
   {
-    name: "রহিম আহমেদ",
-    nameEn: "Rahim Ahmed",
+    name: "ইশা দাস",
+    nameEn: "Isha Das",
     role: "Founder & Lead Developer",
     avatar: "👨‍💻",
     gradient: "from-bangla-purple-500 to-bangla-pink-500",
   },
   {
-    name: "সুমাইয়া খান",
-    nameEn: "Sumaiya Khan",
+    name: "শিহাব আহমেদ",
+    nameEn: "Shihab Ahemed",
     role: "AI/ML Engineer",
     avatar: "👩‍🔬",
     gradient: "from-bangla-pink-500 to-bangla-orange-500",
   },
   {
-    name: "করিম হোসেন",
-    nameEn: "Karim Hossain",
+    name: "শিহাব আহমেদ",
+    nameEn: "Shihab Ahemed",
     role: "UX Designer",
     avatar: "🎨",
     gradient: "from-bangla-purple-500 to-bangla-purple-600",
