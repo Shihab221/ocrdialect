@@ -12,7 +12,6 @@ const steps = [
     description:
       "PDF বা ছবি আপলোড করুন → OCR স্বয়ংক্রিয়ভাবে টেক্সট বের করে নেয়",
     gradient: "from-bangla-purple-500 to-bangla-purple-600",
-    color: "bangla-purple",
   },
   {
     number: "২",
@@ -22,7 +21,6 @@ const steps = [
     description:
       "মাইকে ক্লিক করে আপনার প্রশ্ন বাংলায় বলুন → ASR টেক্সটে রূপান্তর করে",
     gradient: "from-bangla-pink-500 to-bangla-pink-600",
-    color: "bangla-pink",
   },
   {
     number: "৩",
@@ -31,8 +29,7 @@ const steps = [
     titleEn: "AI Analyzes",
     description:
       "AI ডকুমেন্ট পড়ে + আপনার প্রশ্ন বোঝে → সঠিক উত্তর খুঁজে দেয়",
-    gradient: "from-bangla-cyan-500 to-bangla-cyan-600",
-    color: "bangla-cyan",
+    gradient: "from-bangla-purple-500 to-bangla-pink-500",
   },
   {
     number: "৪",
@@ -41,8 +38,7 @@ const steps = [
     titleEn: "Hear Answer in Bangla",
     description:
       "উত্তর স্বাভাবিক বাংলায় পান — লেখায় ও কথায় (TTS)!",
-    gradient: "from-bangla-orange-500 to-bangla-orange-600",
-    color: "bangla-orange",
+    gradient: "from-bangla-pink-500 to-bangla-orange-500",
   },
 ];
 
@@ -53,10 +49,11 @@ export function HowItWorksSection() {
       className="relative py-16 md:py-24 overflow-hidden"
     >
       {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-0 w-64 h-64 bg-bangla-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-64 h-64 bg-bangla-pink-500/10 rounded-full blur-3xl" />
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-bangla-purple-50/30 to-white dark:from-slate-900 dark:to-slate-800" />
+
+      {/* Decorative Elements */}
+      <div className="absolute top-1/4 left-0 w-64 h-64 rounded-full bg-gradient-to-br from-bangla-purple-100/50 to-transparent dark:from-bangla-purple-900/20" />
+      <div className="absolute bottom-1/4 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-bangla-pink-100/50 to-transparent dark:from-bangla-pink-900/20" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -67,7 +64,7 @@ export function HowItWorksSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12 md:mb-16"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-cyan-100 to-bangla-teal-100 dark:from-bangla-cyan-900/50 dark:to-bangla-teal-900/50 text-bangla-cyan-700 dark:text-bangla-cyan-300 text-sm font-medium mb-4 bangla-text">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4 bangla-text">
             🔄 কিভাবে কাজ করে
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bangla-text">
@@ -81,7 +78,7 @@ export function HowItWorksSection() {
         {/* Steps */}
         <div className="relative">
           {/* Connection Line - Desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 via-bangla-cyan-500 to-bangla-orange-500 transform -translate-y-1/2 rounded-full" />
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-bangla-purple-500 to-bangla-pink-500 transform -translate-y-1/2 rounded-full" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-6">
             {steps.map((step, index) => (
@@ -96,15 +93,13 @@ export function HowItWorksSection() {
                 {/* Arrow for mobile */}
                 {index < steps.length - 1 && (
                   <div className="lg:hidden absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                    <ArrowDown
-                      className={`w-6 h-6 text-${step.color}-500`}
-                    />
+                    <ArrowDown className="w-6 h-6 text-bangla-purple-400" />
                   </div>
                 )}
 
                 <motion.div
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="glass-card p-6 text-center h-full"
+                  whileHover={{ y: -5 }}
+                  className="glass-card p-6 text-center h-full hover:shadow-xl transition-shadow"
                 >
                   {/* Number Badge */}
                   <div
@@ -117,9 +112,7 @@ export function HowItWorksSection() {
                   <div
                     className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${step.gradient}/20 flex items-center justify-center mb-4`}
                   >
-                    <step.icon
-                      className={`w-8 h-8 text-${step.color}-500`}
-                    />
+                    <step.icon className="w-8 h-8 text-bangla-purple-500" />
                   </div>
 
                   {/* Title */}
@@ -143,4 +136,3 @@ export function HowItWorksSection() {
     </section>
   );
 }
-

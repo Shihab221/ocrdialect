@@ -21,15 +21,15 @@ import { Button } from "@/components/ui/button";
 
 const techStack = [
   { name: "Next.js 14", color: "bg-slate-900 dark:bg-white dark:text-slate-900" },
-  { name: "React", color: "bg-cyan-500" },
-  { name: "Tailwind CSS", color: "bg-teal-500" },
-  { name: "Framer Motion", color: "bg-pink-500" },
-  { name: "TypeScript", color: "bg-blue-500" },
-  { name: "Whisper ASR", color: "bg-green-500" },
-  { name: "IndicOCR", color: "bg-orange-500" },
-  { name: "Coqui TTS", color: "bg-purple-500" },
+  { name: "React", color: "bg-bangla-purple-500" },
+  { name: "Tailwind CSS", color: "bg-bangla-pink-500" },
+  { name: "Framer Motion", color: "bg-bangla-purple-600" },
+  { name: "TypeScript", color: "bg-bangla-purple-700" },
+  { name: "Whisper ASR", color: "bg-bangla-pink-600" },
+  { name: "IndicOCR", color: "bg-bangla-orange-500" },
+  { name: "Coqui TTS", color: "bg-bangla-purple-500" },
   { name: "shadcn/ui", color: "bg-slate-700" },
-  { name: "Hugging Face", color: "bg-yellow-500 text-slate-900" },
+  { name: "Hugging Face", color: "bg-bangla-pink-500" },
 ];
 
 const values = [
@@ -55,7 +55,7 @@ const values = [
     titleEn: "Privacy",
     description:
       "আপনার ডকুমেন্ট সম্পূর্ণ নিরাপদ। আমরা কোনো তথ্য সংরক্ষণ করি না।",
-    gradient: "from-bangla-cyan-500 to-bangla-cyan-600",
+    gradient: "from-bangla-purple-500 to-bangla-pink-500",
   },
 ];
 
@@ -79,7 +79,7 @@ const team = [
     nameEn: "Karim Hossain",
     role: "UX Designer",
     avatar: "🎨",
-    gradient: "from-bangla-cyan-500 to-bangla-teal-500",
+    gradient: "from-bangla-purple-500 to-bangla-purple-600",
   },
 ];
 
@@ -102,10 +102,11 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
         {/* Background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-bangla-purple-500/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-bangla-pink-500/20 rounded-full blur-3xl" />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-bangla-purple-100/50 via-white to-bangla-pink-100/50 dark:from-bangla-purple-900/20 dark:via-slate-900 dark:to-bangla-pink-900/20" />
+        
+        {/* Decorative */}
+        <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-bangla-purple-200/30 to-transparent dark:from-bangla-purple-800/20" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-gradient-to-br from-bangla-pink-200/30 to-transparent dark:from-bangla-pink-800/20" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -153,7 +154,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="glass-card p-8 md:p-12 text-center"
           >
-            <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center">
               <Globe2 className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-4 gradient-text bangla-text">
@@ -179,7 +180,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-cyan-100 to-bangla-teal-100 dark:from-bangla-cyan-900/50 dark:to-bangla-teal-900/50 text-bangla-cyan-700 dark:text-bangla-cyan-300 text-sm font-medium mb-4 bangla-text">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4 bangla-text">
               ✨ আমাদের মূল্যবোধ
             </span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bangla-text">
@@ -198,8 +199,8 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                whileHover={{ scale: 1.03, y: -5 }}
-                className="glass-card p-6 text-center"
+                whileHover={{ y: -5 }}
+                className="glass-card p-6 text-center hover:shadow-xl transition-shadow"
               >
                 <div
                   className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${value.gradient} flex items-center justify-center shadow-lg`}
@@ -222,7 +223,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tech Stack Section */}
-      <section className="relative py-16 md:py-20 bg-gradient-to-b from-transparent to-slate-50/50 dark:to-slate-800/50">
+      <section className="relative py-16 md:py-20 bg-gradient-to-b from-transparent to-bangla-purple-50/30 dark:to-slate-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -230,7 +231,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-orange-100 to-bangla-pink-100 dark:from-bangla-orange-900/50 dark:to-bangla-pink-900/50 text-bangla-orange-700 dark:text-bangla-orange-300 text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4">
               <Code2 className="w-4 h-4 inline mr-1" />
               Tech Stack
             </span>
@@ -252,7 +253,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: 1.1, y: -3 }}
+                whileHover={{ y: -3 }}
                 className={`px-4 py-2 rounded-full ${tech.color} text-white font-medium shadow-lg cursor-default`}
               >
                 {tech.name}
@@ -291,8 +292,8 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                whileHover={{ scale: 1.03, y: -5 }}
-                className="glass-card p-6 text-center"
+                whileHover={{ y: -5 }}
+                className="glass-card p-6 text-center hover:shadow-xl transition-shadow"
               >
                 <div
                   className={`w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br ${member.gradient} flex items-center justify-center text-4xl shadow-lg`}
@@ -394,7 +395,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-bangla-cyan-500 dark:hover:text-bangla-cyan-400 transition-colors"
+                  className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-bangla-purple-500 dark:hover:text-bangla-purple-400 transition-colors"
                 >
                   <Twitter className="w-5 h-5" />
                 </motion.a>
@@ -432,9 +433,11 @@ export default function AboutPage() {
               আপনার ডকুমেন্ট থেকে প্রশ্ন করুন, উত্তর পান বাংলায়।
             </p>
             <Link href="/try">
-              <Button size="xl">
-                <span className="bangla-text">এখনই শুরু করুন</span>
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="xl">
+                  <span className="bangla-text">এখনই শুরু করুন</span>
+                </Button>
+              </motion.div>
             </Link>
           </motion.div>
         </div>
@@ -442,4 +445,3 @@ export default function AboutPage() {
     </div>
   );
 }
-

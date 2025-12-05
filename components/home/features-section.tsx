@@ -37,9 +37,9 @@ const features = [
     titleEn: "Smart Bangla Understanding",
     description:
       "আমাদের AI বাংলা ভাষা গভীরভাবে বোঝে এবং সঠিক উত্তর খুঁজে দেয়।",
-    gradient: "from-bangla-cyan-500 to-bangla-cyan-600",
-    bgGradient: "from-bangla-cyan-50 to-bangla-cyan-100",
-    darkBgGradient: "dark:from-bangla-cyan-900/30 dark:to-bangla-cyan-800/30",
+    gradient: "from-bangla-purple-600 to-bangla-pink-500",
+    bgGradient: "from-bangla-purple-50 to-bangla-pink-50",
+    darkBgGradient: "dark:from-bangla-purple-900/30 dark:to-bangla-pink-900/30",
   },
   {
     icon: MessageSquare,
@@ -47,9 +47,9 @@ const features = [
     titleEn: "Natural Bangla Spoken Answer",
     description:
       "উত্তর লেখা ও কথায় পাবেন — একদম স্বাভাবিক বাংলায়!",
-    gradient: "from-bangla-orange-500 to-bangla-orange-600",
-    bgGradient: "from-bangla-orange-50 to-bangla-orange-100",
-    darkBgGradient: "dark:from-bangla-orange-900/30 dark:to-bangla-orange-800/30",
+    gradient: "from-bangla-pink-500 to-bangla-orange-500",
+    bgGradient: "from-bangla-pink-50 to-bangla-orange-50",
+    darkBgGradient: "dark:from-bangla-pink-900/30 dark:to-bangla-orange-900/30",
   },
   {
     icon: Globe2,
@@ -57,9 +57,9 @@ const features = [
     titleEn: "Full Bangla Dialect Support",
     description:
       "ঢাকাইয়া, সিলেটি, চট্টগ্রামী — আপনার উপভাষায় কথা বলুন!",
-    gradient: "from-bangla-teal-500 to-bangla-teal-600",
-    bgGradient: "from-bangla-teal-50 to-bangla-teal-100",
-    darkBgGradient: "dark:from-bangla-teal-900/30 dark:to-bangla-teal-800/30",
+    gradient: "from-bangla-purple-500 to-bangla-pink-500",
+    bgGradient: "from-bangla-purple-50 to-bangla-pink-50",
+    darkBgGradient: "dark:from-bangla-purple-900/30 dark:to-bangla-pink-900/30",
   },
   {
     icon: Zap,
@@ -67,9 +67,9 @@ const features = [
     titleEn: "Instant Response with Voice Output",
     description:
       "মাত্র কয়েক সেকেন্ডে পান আপনার প্রশ্নের উত্তর — ভয়েস সহ!",
-    gradient: "from-yellow-500 to-amber-500",
-    bgGradient: "from-yellow-50 to-amber-100",
-    darkBgGradient: "dark:from-yellow-900/30 dark:to-amber-800/30",
+    gradient: "from-bangla-orange-500 to-bangla-pink-500",
+    bgGradient: "from-bangla-orange-50 to-bangla-pink-50",
+    darkBgGradient: "dark:from-bangla-orange-900/30 dark:to-bangla-pink-900/30",
   },
 ];
 
@@ -98,7 +98,7 @@ export function FeaturesSection() {
   return (
     <section id="features" className="relative py-16 md:py-24 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-bangla-purple-50/30 dark:from-slate-800 dark:to-slate-900" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -132,7 +132,7 @@ export function FeaturesSection() {
             <motion.div
               key={index}
               variants={itemVariants}
-              whileHover={{ scale: 1.03, y: -5 }}
+              whileHover={{ y: -5 }}
               className={`feature-card bg-gradient-to-br ${feature.bgGradient} ${feature.darkBgGradient}`}
             >
               <div
@@ -156,4 +156,3 @@ export function FeaturesSection() {
     </section>
   );
 }
-

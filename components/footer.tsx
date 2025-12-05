@@ -32,7 +32,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bangla-purple-500/5 to-bangla-pink-500/10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bangla-purple-50/50 to-bangla-pink-50/50 dark:via-bangla-purple-900/10 dark:to-bangla-pink-900/10" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -40,7 +40,7 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center shadow-lg">
                   <Mic className="w-5 h-5 text-white" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-bangla-orange-500 flex items-center justify-center">
@@ -137,24 +137,14 @@ export function Footer() {
             <p className="text-sm text-slate-600 dark:text-slate-400 bangla-text">
               © ২০২৪ বাংলা বলে। সর্বস্বত্ব সংরক্ষিত।
             </p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"
-            >
+            <p className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
               Made with
-              <motion.span
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-              >
-                <Heart className="w-4 h-4 text-bangla-pink-500 fill-bangla-pink-500" />
-              </motion.span>
+              <Heart className="w-4 h-4 text-bangla-pink-500 fill-bangla-pink-500" />
               for Bangla speakers
-            </motion.p>
+            </p>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-

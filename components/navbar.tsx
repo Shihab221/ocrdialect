@@ -3,22 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Moon, Sun, Menu, X, Mic, FileText } from "lucide-react";
+import { Moon, Sun, Menu, X, Mic, FileText, Globe } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
-const navLinks = [
-  { href: "/", label: "হোম", labelEn: "Home" },
-  { href: "/try", label: "চেষ্টা করুন", labelEn: "Try It" },
-  { href: "/about", label: "আমাদের সম্পর্কে", labelEn: "About" },
-];
+const navLinksData = {
+  bn: [
+    { href: "/", label: "হোম", labelEn: "Home" },
+    { href: "/try", label: "চেষ্টা করুন", labelEn: "Try It" },
+    { href: "/about", label: "আমাদের সম্পর্কে", labelEn: "About" },
+  ],
+  en: [
+    { href: "/", label: "Home", labelEn: "Home" },
+    { href: "/try", label: "Try It", labelEn: "Try It" },
+    { href: "/about", label: "About", labelEn: "About" },
+  ],
+};
 
 export function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { lang, toggleLang } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = navLinksData[lang];
 
   useEffect(() => {
     setMounted(true);
@@ -36,11 +47,11 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="relative"
             >
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center shadow-lg">
                 <Mic className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-bangla-orange-500 flex items-center justify-center">
@@ -48,11 +59,14 @@ export function Navbar() {
               </div>
             </motion.div>
             <div className="flex flex-col">
-              <span className="text-lg md:text-xl font-bold gradient-text bangla-text">
-                বাংলা বলে
+              <span className={cn(
+                "text-lg md:text-xl font-bold gradient-text",
+                lang === "bn" && "bangla-text"
+              )}>
+                {lang === "bn" ? "বাংলা বলে" : "Bangla Bole"}
               </span>
               <span className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 -mt-1">
-                Bangla Bole
+                {lang === "bn" ? "Bangla Bole" : "বাংলা বলে"}
               </span>
             </div>
           </Link>
@@ -82,9 +96,14 @@ export function Navbar() {
                       }}
                     />
                   )}
-                  <span className="relative z-10 flex flex-col items-center">
-                    <span className="bangla-text text-sm">{link.label}</span>
-                    <span className="text-[10px] opacity-70">{link.labelEn}</span>
+                  <span className={cn(
+                    "relative z-10 flex flex-col items-center",
+                    lang === "bn" && "bangla-text"
+                  )}>
+                    <span className="text-sm">{link.label}</span>
+                    {lang === "bn" && (
+                      <span className="text-[10px] opacity-70">{link.labelEn}</span>
+                    )}
                   </span>
                 </motion.div>
               </Link>
@@ -92,14 +111,30 @@ export function Navbar() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Language Toggle */}
+            {mounted && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={toggleLang}
+                className="relative w-10 h-10 md:w-auto md:h-10 md:px-3 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center gap-2 overflow-hidden group"
+                title={lang === "bn" ? "Switch to English" : "বাংলায় পরিবর্তন করুন"}
+              >
+                <Globe className="w-4 h-4 text-bangla-purple-500" />
+                <span className="hidden md:inline text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {lang === "bn" ? "বাং" : "EN"}
+                </span>
+              </motion.button>
+            )}
+
             {/* Theme Toggle */}
             {mounted && (
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="relative w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden group"
+                className="relative w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden group"
               >
                 <motion.div
                   initial={false}
@@ -123,7 +158,6 @@ export function Navbar() {
                 >
                   <Sun className="w-5 h-5 text-bangla-orange-500" />
                 </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-r from-bangla-purple-500/0 to-bangla-pink-500/0 group-hover:from-bangla-purple-500/10 group-hover:to-bangla-pink-500/10 transition-all" />
               </motion.button>
             )}
 
@@ -132,11 +166,14 @@ export function Navbar() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 text-white font-semibold shadow-lg hover:shadow-xl transition-shadow"
+                className={cn(
+                  "px-5 py-2.5 rounded-xl bg-gradient-to-r from-bangla-purple-500 to-bangla-pink-500 text-white font-semibold shadow-lg hover:shadow-xl transition-shadow",
+                  lang === "bn" && "bangla-text"
+                )}
               >
                 <span className="flex items-center gap-2">
                   <Mic className="w-4 h-4" />
-                  <span className="bangla-text">এখনই শুরু করুন</span>
+                  <span>{lang === "bn" ? "এখনই শুরু করুন" : "Get Started"}</span>
                 </span>
               </motion.button>
             </Link>
@@ -165,7 +202,7 @@ export function Navbar() {
           height: mobileMenuOpen ? "auto" : 0,
           opacity: mobileMenuOpen ? 1 : 0,
         }}
-        className="md:hidden overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-white/20 dark:border-slate-700/50"
+        className="md:hidden overflow-hidden bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-700"
       >
         <div className="px-4 py-4 space-y-2">
           {navLinks.map((link) => (
@@ -180,22 +217,41 @@ export function Navbar() {
                   "px-4 py-3 rounded-xl transition-colors",
                   pathname === link.href
                     ? "bg-gradient-to-r from-bangla-purple-500 to-bangla-pink-500 text-white"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
+                  lang === "bn" && "bangla-text"
                 )}
               >
-                <span className="bangla-text font-medium">{link.label}</span>
-                <span className="text-xs ml-2 opacity-70">({link.labelEn})</span>
+                <span className="font-medium">{link.label}</span>
+                {lang === "bn" && (
+                  <span className="text-xs ml-2 opacity-70">({link.labelEn})</span>
+                )}
               </motion.div>
             </Link>
           ))}
+          
+          {/* Mobile Language Toggle */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={toggleLang}
+            className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-2"
+          >
+            <Globe className="w-4 h-4 text-bangla-purple-500" />
+            <span className="font-medium">
+              {lang === "bn" ? "Switch to English" : "বাংলায় পরিবর্তন করুন"}
+            </span>
+          </motion.button>
+
           <Link href="/try" onClick={() => setMobileMenuOpen(false)}>
             <motion.button
               whileTap={{ scale: 0.98 }}
-              className="w-full mt-4 px-4 py-3 rounded-xl bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 text-white font-semibold"
+              className={cn(
+                "w-full mt-2 px-4 py-3 rounded-xl bg-gradient-to-r from-bangla-purple-500 to-bangla-pink-500 text-white font-semibold",
+                lang === "bn" && "bangla-text"
+              )}
             >
               <span className="flex items-center justify-center gap-2">
                 <Mic className="w-4 h-4" />
-                <span className="bangla-text">এখনই শুরু করুন</span>
+                <span>{lang === "bn" ? "এখনই শুরু করুন" : "Get Started"}</span>
               </span>
             </motion.button>
           </Link>
@@ -204,4 +260,3 @@ export function Navbar() {
     </motion.nav>
   );
 }
-

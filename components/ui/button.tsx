@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-bangla-purple-500 via-bangla-pink-500 to-bangla-cyan-500 text-white shadow-lg hover:shadow-xl hover:scale-105",
+          "bg-gradient-to-r from-bangla-purple-500 to-bangla-pink-500 text-white shadow-lg hover:shadow-xl",
         destructive:
           "bg-red-500 text-white shadow-md hover:bg-red-600",
         outline:
@@ -19,7 +19,6 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100",
         link: "text-bangla-purple-500 underline-offset-4 hover:underline",
-        glow: "glow-button",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -57,4 +56,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
-

@@ -12,41 +12,15 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const floatingElements = [
-  { icon: "📄", delay: 0, x: "10%", y: "20%" },
-  { icon: "🎙️", delay: 0.5, x: "85%", y: "15%" },
-  { icon: "🧠", delay: 1, x: "75%", y: "75%" },
-  { icon: "💬", delay: 1.5, x: "15%", y: "70%" },
-  { icon: "🌈", delay: 2, x: "50%", y: "85%" },
-  { icon: "⚡", delay: 2.5, x: "90%", y: "50%" },
-];
-
 export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0 animated-gradient-bg opacity-20" />
-      
-      {/* Mesh Gradient Overlay */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-bangla-purple-500/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-bangla-pink-500/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-bangla-cyan-500/20 rounded-full blur-3xl" />
-      </div>
+      {/* Simple Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-bangla-purple-100/50 via-white to-bangla-pink-100/50 dark:from-bangla-purple-900/20 dark:via-slate-900 dark:to-bangla-pink-900/20" />
 
-      {/* Floating Elements */}
-      {floatingElements.map((el, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: el.delay, duration: 0.5 }}
-          style={{ left: el.x, top: el.y }}
-          className="absolute text-3xl md:text-4xl float-element hidden md:block"
-        >
-          {el.icon}
-        </motion.div>
-      ))}
+      {/* Decorative Gradient Circles (no blur) */}
+      <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-gradient-to-br from-bangla-purple-200/30 to-transparent dark:from-bangla-purple-800/20" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-gradient-to-br from-bangla-pink-200/30 to-transparent dark:from-bangla-pink-800/20" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -86,11 +60,11 @@ export function HeroSection() {
             className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-8"
           >
             Ask questions about any document in{" "}
-            <span className="text-bangla-purple-500 font-semibold">
+            <span className="text-bangla-purple-600 dark:text-bangla-purple-400 font-semibold">
               Bangla voice
             </span>{" "}
             & get answers in natural{" "}
-            <span className="text-bangla-pink-500 font-semibold">
+            <span className="text-bangla-pink-600 dark:text-bangla-pink-400 font-semibold">
               Bangla dialect
             </span>
           </motion.p>
@@ -103,31 +77,35 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link href="/try">
-              <Button size="xl" className="group">
-                <span className="bangla-text">এখনই চেষ্টা করুন — ফ্রি!</span>
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="xl" className="group">
+                  <span className="bangla-text">এখনই চেষ্টা করুন — ফ্রি!</span>
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </motion.div>
             </Link>
             <Link href="#how-it-works">
-              <Button variant="outline" size="xl">
-                <span className="bangla-text">কিভাবে কাজ করে?</span>
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button variant="outline" size="xl">
+                  <span className="bangla-text">কিভাবে কাজ করে?</span>
+                </Button>
+              </motion.div>
             </Link>
           </motion.div>
         </div>
 
-        {/* Floating Cards Preview */}
+        {/* Preview Cards */}
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
           {/* Upload Card */}
           <motion.div
-            initial={{ opacity: 0, x: -50, rotateY: -10 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            whileHover={{ scale: 1.02, rotateY: 5 }}
-            className="glass-card p-6 md:p-8 group cursor-pointer"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            whileHover={{ y: -5 }}
+            className="glass-card p-6 md:p-8 group cursor-pointer hover:shadow-xl transition-shadow"
           >
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center shadow-lg">
                 <FileImage className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1">
@@ -149,14 +127,14 @@ export function HeroSection() {
 
           {/* Voice Card */}
           <motion.div
-            initial={{ opacity: 0, x: 50, rotateY: 10 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            whileHover={{ scale: 1.02, rotateY: -5 }}
-            className="glass-card p-6 md:p-8 group cursor-pointer"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            whileHover={{ y: -5 }}
+            className="glass-card p-6 md:p-8 group cursor-pointer hover:shadow-xl transition-shadow"
           >
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-bangla-pink-500 to-bangla-orange-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-bangla-pink-500 to-bangla-orange-500 flex items-center justify-center shadow-lg">
                 <Mic className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1">
@@ -171,12 +149,10 @@ export function HeroSection() {
             <div className="mt-6 flex flex-col items-center">
               <motion.div
                 whileHover={{ scale: 1.1 }}
-                className="relative"
+                whileTap={{ scale: 0.95 }}
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-bangla-pink-500 to-bangla-purple-500 flex items-center justify-center shadow-xl cursor-pointer"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-bangla-pink-500 to-bangla-orange-500 flex items-center justify-center shadow-xl cursor-pointer">
-                  <Mic className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute inset-0 rounded-full bg-bangla-pink-500/30 animate-ping" />
+                <Mic className="w-10 h-10 text-white" />
               </motion.div>
               <div className="flex items-center gap-2 mt-4 text-slate-600 dark:text-slate-400">
                 <Volume2 className="w-4 h-4" />
@@ -206,4 +182,3 @@ export function HeroSection() {
     </section>
   );
 }
-
