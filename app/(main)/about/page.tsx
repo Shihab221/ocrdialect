@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/language-provider";
+import { cn } from "@/lib/utils";
 
 const techStack = [
   { name: "Next.js 14", color: "bg-slate-900 dark:bg-white dark:text-slate-900" },
@@ -32,56 +34,112 @@ const techStack = [
   { name: "Hugging Face", color: "bg-bangla-pink-500" },
 ];
 
-const values = [
-  {
-    icon: Target,
-    title: "অভিগম্যতা",
-    titleEn: "Accessibility",
-    description:
-      "মাতৃভাষায় তথ্য সবার জন্য সহজলভ্য করা — বিশেষ করে গ্রামীণ ও উপভাষা-ভাষী বাংলা ব্যবহারকারীদের জন্য।",
-    gradient: "from-bangla-purple-500 to-bangla-purple-600",
-  },
-  {
-    icon: Lightbulb,
-    title: "উদ্ভাবন",
-    titleEn: "Innovation",
-    description:
-      "সর্বাধুনিক AI প্রযুক্তি ব্যবহার করে বাংলা ভাষা প্রক্রিয়াকরণে নতুন মাত্রা যোগ করা।",
-    gradient: "from-bangla-pink-500 to-bangla-pink-600",
-  },
-  {
-    icon: Shield,
-    title: "গোপনীয়তা",
-    titleEn: "Privacy",
-    description:
-      "আপনার ডকুমেন্ট সম্পূর্ণ নিরাপদ। আমরা কোনো তথ্য সংরক্ষণ করি না।",
-    gradient: "from-bangla-purple-500 to-bangla-pink-500",
-  },
-];
+const valuesData = {
+  bn: [
+    {
+      icon: Target,
+      title: "অভিগম্যতা",
+      description: "মাতৃভাষায় তথ্য সবার জন্য সহজলভ্য করা — বিশেষ করে গ্রামীণ ও উপভাষা-ভাষী বাংলা ব্যবহারকারীদের জন্য।",
+      gradient: "from-bangla-purple-500 to-bangla-purple-600",
+    },
+    {
+      icon: Lightbulb,
+      title: "উদ্ভাবন",
+      description: "সর্বাধুনিক AI প্রযুক্তি ব্যবহার করে বাংলা ভাষা প্রক্রিয়াকরণে নতুন মাত্রা যোগ করা।",
+      gradient: "from-bangla-pink-500 to-bangla-pink-600",
+    },
+    {
+      icon: Shield,
+      title: "গোপনীয়তা",
+      description: "আপনার ডকুমেন্ট সম্পূর্ণ নিরাপদ। আমরা কোনো তথ্য সংরক্ষণ করি না।",
+      gradient: "from-bangla-purple-500 to-bangla-pink-500",
+    },
+  ],
+  en: [
+    {
+      icon: Target,
+      title: "Accessibility",
+      description: "Making information accessible in mother tongue — especially for rural and dialect-speaking Bangla users.",
+      gradient: "from-bangla-purple-500 to-bangla-purple-600",
+    },
+    {
+      icon: Lightbulb,
+      title: "Innovation",
+      description: "Adding new dimensions to Bangla language processing using cutting-edge AI technology.",
+      gradient: "from-bangla-pink-500 to-bangla-pink-600",
+    },
+    {
+      icon: Shield,
+      title: "Privacy",
+      description: "Your documents are completely safe. We don't store any data.",
+      gradient: "from-bangla-purple-500 to-bangla-pink-500",
+    },
+  ],
+};
 
-const team = [
-  {
-    name: "ইশা দাস",
-    nameEn: "Isha Das",
-    role: "Founder & Lead Developer",
-    avatar: "👨‍💻",
-    gradient: "from-bangla-purple-500 to-bangla-pink-500",
+const teamData = {
+  bn: [
+    { name: "ইশা দাস", role: "প্রতিষ্ঠাতা ও লিড ডেভেলপার", avatar: "👨‍💻", gradient: "from-bangla-purple-500 to-bangla-pink-500" },
+    { name: "শিহাব আহমেদ", role: "AI/ML ইঞ্জিনিয়ার", avatar: "👩‍🔬", gradient: "from-bangla-pink-500 to-bangla-orange-500" },
+    { name: "শিহাব আহমেদ", role: "UX ডিজাইনার", avatar: "🎨", gradient: "from-bangla-purple-500 to-bangla-purple-600" },
+  ],
+  en: [
+    { name: "Isha Das", role: "Founder & Lead Developer", avatar: "👨‍💻", gradient: "from-bangla-purple-500 to-bangla-pink-500" },
+    { name: "Shihab Ahemed", role: "AI/ML Engineer", avatar: "👩‍🔬", gradient: "from-bangla-pink-500 to-bangla-orange-500" },
+    { name: "Shihab Ahemed", role: "UX Designer", avatar: "🎨", gradient: "from-bangla-purple-500 to-bangla-purple-600" },
+  ],
+};
+
+const translations = {
+  bn: {
+    badge: "আমাদের গল্প",
+    heroTitle1: "বাংলা বলে",
+    heroTitle2: " কেন তৈরি করলাম?",
+    heroDescription: "আমাদের লক্ষ্য হলো মাতৃভাষায় তথ্য সবার জন্য সহজলভ্য করা — বিশেষ করে যারা ইংরেজি বা আনুষ্ঠানিক বাংলায় স্বাচ্ছন্দ্য বোধ করেন না, তাদের জন্য। গ্রামের মানুষ, বয়স্ক মানুষ, এবং যারা বিভিন্ন উপভাষায় কথা বলেন — সবাই যেন সহজে ডকুমেন্ট বুঝতে পারেন।",
+    missionTitle: "আমাদের মিশন",
+    missionQuote: '"Make information accessible in mother tongue, especially for rural & dialect-speaking Bangla users."',
+    missionTagline: "মাতৃভাষায় তথ্য — সবার অধিকার!",
+    valuesBadge: "✨ আমাদের মূল্যবোধ",
+    valuesTitle: "যা আমাদের চালিত করে",
+    techBadge: "Tech Stack",
+    techTitle: "আমরা যা ব্যবহার করি",
+    teamBadge: "আমাদের টিম",
+    teamTitle: "যারা এটি তৈরি করেছেন",
+    openSourceTitle: "Open Source",
+    openSourceSubtitle: "সম্পূর্ণ ওপেন সোর্স",
+    openSourceDesc: "বাংলা বলে সম্পূর্ণ ওপেন সোর্স। আপনি চাইলে কোড দেখতে পারেন, অবদান রাখতে পারেন, এবং নিজের প্রয়োজনে ব্যবহার করতে পারেন।",
+    contactTitle: "যোগাযোগ করুন",
+    contactSubtitle: "Get in Touch",
+    contactDesc: "প্রশ্ন, পরামর্শ, বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন। আমরা সবসময় শুনতে আগ্রহী!",
+    ctaTitle: "এখনই বাংলা বলে ব্যবহার করুন!",
+    ctaDesc: "আপনার ডকুমেন্ট থেকে প্রশ্ন করুন, উত্তর পান বাংলায়।",
+    ctaButton: "এখনই শুরু করুন",
   },
-  {
-    name: "শিহাব আহমেদ",
-    nameEn: "Shihab Ahemed",
-    role: "AI/ML Engineer",
-    avatar: "👩‍🔬",
-    gradient: "from-bangla-pink-500 to-bangla-orange-500",
+  en: {
+    badge: "Our Story",
+    heroTitle1: "Bangla Bole",
+    heroTitle2: " — Why We Built It?",
+    heroDescription: "Our goal is to make information accessible in mother tongue — especially for those who are not comfortable with English or formal Bangla. Rural people, elderly, and those who speak various dialects — everyone should be able to easily understand documents.",
+    missionTitle: "Our Mission",
+    missionQuote: '"Make information accessible in mother tongue, especially for rural & dialect-speaking Bangla users."',
+    missionTagline: "Information in mother tongue — everyone's right!",
+    valuesBadge: "✨ Our Values",
+    valuesTitle: "What Drives Us",
+    techBadge: "Tech Stack",
+    techTitle: "What We Use",
+    teamBadge: "Our Team",
+    teamTitle: "The People Behind It",
+    openSourceTitle: "Open Source",
+    openSourceSubtitle: "Completely Open Source",
+    openSourceDesc: "Bangla Bole is completely open source. You can view the code, contribute, and use it for your own needs.",
+    contactTitle: "Get in Touch",
+    contactSubtitle: "Contact Us",
+    contactDesc: "For questions, suggestions, or collaboration, contact us. We're always eager to hear from you!",
+    ctaTitle: "Start Using Bangla Bole Now!",
+    ctaDesc: "Ask questions from your documents, get answers in Bangla.",
+    ctaButton: "Get Started",
   },
-  {
-    name: "শিহাব আহমেদ",
-    nameEn: "Shihab Ahemed",
-    role: "UX Designer",
-    avatar: "🎨",
-    gradient: "from-bangla-purple-500 to-bangla-purple-600",
-  },
-];
+};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -97,6 +155,11 @@ const itemVariants = {
 };
 
 export default function AboutPage() {
+  const { lang } = useLanguage();
+  const t = translations[lang];
+  const values = valuesData[lang];
+  const team = teamData[lang];
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -115,19 +178,18 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-6"
           >
             <Heart className="w-4 h-4" />
-            <span className="bangla-text">আমাদের গল্প</span>
+            <span className={cn(lang === "bn" && "bangla-text")}>{t.badge}</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 bangla-text"
+            className={cn("text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6", lang === "bn" && "bangla-text")}
           >
-            <span className="gradient-text">বাংলা বলে</span>
+            <span className="gradient-text">{t.heroTitle1}</span>
             <span className="text-slate-900 dark:text-white">
-              {" "}
-              কেন তৈরি করলাম?
+              {t.heroTitle2}
             </span>
           </motion.h1>
 
@@ -135,12 +197,9 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto bangla-text leading-relaxed"
+            className={cn("text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed", lang === "bn" && "bangla-text")}
           >
-            আমাদের লক্ষ্য হলো মাতৃভাষায় তথ্য সবার জন্য সহজলভ্য করা — বিশেষ করে
-            যারা ইংরেজি বা আনুষ্ঠানিক বাংলায় স্বাচ্ছন্দ্য বোধ করেন না, তাদের
-            জন্য। গ্রামের মানুষ, বয়স্ক মানুষ, এবং যারা বিভিন্ন উপভাষায় কথা বলেন
-            — সবাই যেন সহজে ডকুমেন্ট বুঝতে পারেন।
+            {t.heroDescription}
           </motion.p>
         </div>
       </section>
@@ -157,15 +216,14 @@ export default function AboutPage() {
             <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500 flex items-center justify-center">
               <Globe2 className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 gradient-text bangla-text">
-              আমাদের মিশন
+            <h2 className={cn("text-2xl md:text-3xl font-bold mb-4 gradient-text", lang === "bn" && "bangla-text")}>
+              {t.missionTitle}
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto bangla-text leading-relaxed">
-              &ldquo;Make information accessible in mother tongue, especially for
-              rural & dialect-speaking Bangla users.&rdquo;
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+              {t.missionQuote}
             </p>
-            <p className="text-xl text-slate-900 dark:text-white mt-4 font-medium bangla-text">
-              মাতৃভাষায় তথ্য — সবার অধিকার!
+            <p className={cn("text-xl text-slate-900 dark:text-white mt-4 font-medium", lang === "bn" && "bangla-text")}>
+              {t.missionTagline}
             </p>
           </motion.div>
         </div>
@@ -180,11 +238,11 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4 bangla-text">
-              ✨ আমাদের মূল্যবোধ
+            <span className={cn("inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4", lang === "bn" && "bangla-text")}>
+              {t.valuesBadge}
             </span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bangla-text">
-              <span className="gradient-text">যা আমাদের চালিত করে</span>
+            <h2 className={cn("text-2xl md:text-3xl lg:text-4xl font-bold", lang === "bn" && "bangla-text")}>
+              <span className="gradient-text">{t.valuesTitle}</span>
             </h2>
           </motion.div>
 
@@ -207,13 +265,10 @@ export default function AboutPage() {
                 >
                   <value.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1 bangla-text">
+                <h3 className={cn("text-xl font-bold text-slate-900 dark:text-white mb-3", lang === "bn" && "bangla-text")}>
                   {value.title}
                 </h3>
-                <p className="text-sm text-bangla-purple-600 dark:text-bangla-purple-400 mb-3">
-                  {value.titleEn}
-                </p>
-                <p className="text-slate-600 dark:text-slate-400 bangla-text">
+                <p className={cn("text-slate-600 dark:text-slate-400", lang === "bn" && "bangla-text")}>
                   {value.description}
                 </p>
               </motion.div>
@@ -233,10 +288,10 @@ export default function AboutPage() {
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4">
               <Code2 className="w-4 h-4 inline mr-1" />
-              Tech Stack
+              {t.techBadge}
             </span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bangla-text">
-              <span className="gradient-text">আমরা যা ব্যবহার করি</span>
+            <h2 className={cn("text-2xl md:text-3xl lg:text-4xl font-bold", lang === "bn" && "bangla-text")}>
+              <span className="gradient-text">{t.techTitle}</span>
             </h2>
           </motion.div>
 
@@ -272,12 +327,12 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4 bangla-text">
+            <span className={cn("inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-bangla-purple-100 to-bangla-pink-100 dark:from-bangla-purple-900/50 dark:to-bangla-pink-900/50 text-bangla-purple-700 dark:text-bangla-purple-300 text-sm font-medium mb-4", lang === "bn" && "bangla-text")}>
               <Users className="w-4 h-4 inline mr-1" />
-              আমাদের টিম
+              {t.teamBadge}
             </span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bangla-text">
-              <span className="gradient-text">যারা এটি তৈরি করেছেন</span>
+            <h2 className={cn("text-2xl md:text-3xl lg:text-4xl font-bold", lang === "bn" && "bangla-text")}>
+              <span className="gradient-text">{t.teamTitle}</span>
             </h2>
           </motion.div>
 
@@ -300,13 +355,10 @@ export default function AboutPage() {
                 >
                   {member.avatar}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white bangla-text">
+                <h3 className={cn("text-lg font-bold text-slate-900 dark:text-white", lang === "bn" && "bangla-text")}>
                   {member.name}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">
-                  {member.nameEn}
-                </p>
-                <p className="text-sm text-bangla-purple-600 dark:text-bangla-purple-400">
+                <p className={cn("text-sm text-bangla-purple-600 dark:text-bangla-purple-400 mt-1", lang === "bn" && "bangla-text")}>
                   {member.role}
                 </p>
               </motion.div>
@@ -332,16 +384,15 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                    Open Source
+                    {t.openSourceTitle}
                   </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 bangla-text">
-                    সম্পূর্ণ ওপেন সোর্স
+                  <p className={cn("text-sm text-slate-500 dark:text-slate-400", lang === "bn" && "bangla-text")}>
+                    {t.openSourceSubtitle}
                   </p>
                 </div>
               </div>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 bangla-text">
-                বাংলা বলে সম্পূর্ণ ওপেন সোর্স। আপনি চাইলে কোড দেখতে পারেন,
-                অবদান রাখতে পারেন, এবং নিজের প্রয়োজনে ব্যবহার করতে পারেন।
+              <p className={cn("text-slate-600 dark:text-slate-400 mb-6", lang === "bn" && "bangla-text")}>
+                {t.openSourceDesc}
               </p>
               <Link
                 href="https://github.com"
@@ -368,17 +419,16 @@ export default function AboutPage() {
                   <Mail className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white bangla-text">
-                    যোগাযোগ করুন
+                  <h3 className={cn("text-xl font-bold text-slate-900 dark:text-white", lang === "bn" && "bangla-text")}>
+                    {t.contactTitle}
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Get in Touch
+                    {t.contactSubtitle}
                   </p>
                 </div>
               </div>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 bangla-text">
-                প্রশ্ন, পরামর্শ, বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন।
-                আমরা সবসময় শুনতে আগ্রহী!
+              <p className={cn("text-slate-600 dark:text-slate-400 mb-6", lang === "bn" && "bangla-text")}>
+                {t.contactDesc}
               </p>
               <div className="flex items-center gap-3">
                 <motion.a
@@ -424,18 +474,18 @@ export default function AboutPage() {
             viewport={{ once: true }}
           >
             <Sparkles className="w-12 h-12 mx-auto text-bangla-purple-500 mb-4" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 bangla-text">
+            <h2 className={cn("text-2xl md:text-3xl font-bold mb-4", lang === "bn" && "bangla-text")}>
               <span className="gradient-text">
-                এখনই বাংলা বলে ব্যবহার করুন!
+                {t.ctaTitle}
               </span>
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 bangla-text">
-              আপনার ডকুমেন্ট থেকে প্রশ্ন করুন, উত্তর পান বাংলায়।
+            <p className={cn("text-lg text-slate-600 dark:text-slate-400 mb-8", lang === "bn" && "bangla-text")}>
+              {t.ctaDesc}
             </p>
             <Link href="/try">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="xl">
-                  <span className="bangla-text">এখনই শুরু করুন</span>
+                  <span className={cn(lang === "bn" && "bangla-text")}>{t.ctaButton}</span>
                 </Button>
               </motion.div>
             </Link>

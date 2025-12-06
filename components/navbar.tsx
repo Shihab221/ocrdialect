@@ -11,16 +11,16 @@ import { useLanguage } from "@/components/language-provider";
 
 const navLinksData = {
   bn: [
-    { href: "/", label: "হোম", labelEn: "Home" },
-    { href: "/try", label: "চেষ্টা করুন", labelEn: "Try It" },
-    { href: "/assistant", label: "AI সহকারী", labelEn: "AI Assistant" },
-    { href: "/about", label: "আমাদের সম্পর্কে", labelEn: "About" },
+    { href: "/", label: "হোম" },
+    { href: "/try", label: "চেষ্টা করুন" },
+    { href: "/assistant", label: "AI সহকারী" },
+    { href: "/about", label: "আমাদের সম্পর্কে" },
   ],
   en: [
-    { href: "/", label: "Home", labelEn: "Home" },
-    { href: "/try", label: "Try It", labelEn: "Try It" },
-    { href: "/assistant", label: "AI Assistant", labelEn: "AI Assistant" },
-    { href: "/about", label: "About", labelEn: "About" },
+    { href: "/", label: "Home" },
+    { href: "/try", label: "Try It" },
+    { href: "/assistant", label: "AI Assistant" },
+    { href: "/about", label: "About" },
   ],
 };
 
@@ -60,17 +60,12 @@ export function Navbar() {
                 <FileText className="w-2.5 h-2.5 text-white" />
               </div>
             </motion.div>
-            <div className="flex flex-col">
-              <span className={cn(
-                "text-lg md:text-xl font-bold gradient-text",
-                lang === "bn" && "bangla-text"
-              )}>
-                {lang === "bn" ? "বাংলা বলে" : "Bangla Bole"}
-              </span>
-              <span className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 -mt-1">
-                {lang === "bn" ? "Bangla Bole" : "বাংলা বলে"}
-              </span>
-            </div>
+            <span className={cn(
+              "text-lg md:text-xl font-bold gradient-text",
+              lang === "bn" && "bangla-text"
+            )}>
+              {lang === "bn" ? "বাংলা বলে" : "Bangla Bole"}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -99,13 +94,10 @@ export function Navbar() {
                     />
                   )}
                   <span className={cn(
-                    "relative z-10 flex flex-col items-center",
+                    "relative z-10 text-sm",
                     lang === "bn" && "bangla-text"
                   )}>
-                    <span className="text-sm">{link.label}</span>
-                    {lang === "bn" && (
-                      <span className="text-[10px] opacity-70">{link.labelEn}</span>
-                    )}
+                    {link.label}
                   </span>
                 </motion.div>
               </Link>
@@ -224,9 +216,6 @@ export function Navbar() {
                 )}
               >
                 <span className="font-medium">{link.label}</span>
-                {lang === "bn" && (
-                  <span className="text-xs ml-2 opacity-70">({link.labelEn})</span>
-                )}
               </motion.div>
             </Link>
           ))}
