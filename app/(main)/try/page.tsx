@@ -120,19 +120,94 @@ const translations = {
   },
 };
 
-// Refine OCR text - clean up and format
+// Refine OCR text - clean up and format with noise removal
 function refineOcrText(rawText: string): string {
   if (!rawText) return "";
   
+  // Step 1: Basic cleanup
   let refined = rawText
-    .replace(/[ \t]+/g, " ")
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/\s+([।,;:!?])/g, "$1")
-    .replace(/([।,;:!?])([^\s\n])/g, "$1 $2")
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
-    .join("\n")
+    .replace(/\r\n/g, "\n") // Normalize line endings
+    .replace(/\t/g, " ") // Replace tabs with spaces
+    .replace(/[ ]{2,}/g, " "); // Multiple spaces to single
+  
+  // Step 2: Remove common OCR noise patterns
+  refined = refined
+    .replace(/[|\\\/]{2,}/g, "") // Remove repeated | \ /
+    .replace(/[_]{3,}/g, "") // Remove long underscores
+    .replace(/[=]{3,}/g, "") // Remove long equals
+    .replace(/[-]{4,}/g, "—") // Long dashes to em dash
+    .replace(/[.]{4,}/g, "...") // Multiple dots to ellipsis
+    .replace(/[~`^*#@$%&<>{}[\]]+/g, "") // Remove special chars that are usually noise
+    .replace(/\(\s*\)/g, "") // Remove empty parentheses
+    .replace(/\[\s*\]/g, "") // Remove empty brackets
+    .replace(/"\s*"/g, "") // Remove empty quotes
+    .replace(/'\s*'/g, ""); // Remove empty single quotes
+  
+  // Step 3: Clean up each line
+  const lines = refined.split("\n");
+  const cleanedLines: string[] = [];
+  
+  for (let line of lines) {
+    line = line.trim();
+    
+    // Skip empty lines
+    if (!line) continue;
+    
+    // Skip lines that are mostly special characters (>60% non-alphanumeric, excluding Bengali)
+    const alphanumericAndBengali = line.match(/[\u0980-\u09FF\w]/g) || [];
+    const totalChars = line.replace(/\s/g, "").length;
+    if (totalChars > 0 && alphanumericAndBengali.length / totalChars < 0.4) {
+      continue;
+    }
+    
+    // Skip very short lines with no meaningful content (less than 2 chars that aren't words)
+    if (line.length < 2) continue;
+    
+    // Skip lines that look like OCR artifacts (random single letters/numbers with spaces)
+    if (/^([a-zA-Z0-9]\s+){3,}[a-zA-Z0-9]?$/.test(line)) continue;
+    
+    // Skip lines with excessive repetition of same character
+    if (/(.)\1{4,}/.test(line)) continue;
+    
+    // Clean up individual words in the line
+    const words = line.split(/\s+/);
+    const cleanedWords: string[] = [];
+    
+    for (const word of words) {
+      // Skip if word is just punctuation or special chars
+      if (/^[^\u0980-\u09FF\w]+$/.test(word)) continue;
+      
+      // Skip if word has too many consonants in a row (usually noise) - for English
+      if (/^[a-zA-Z]+$/.test(word) && /[bcdfghjklmnpqrstvwxyz]{5,}/i.test(word)) continue;
+      
+      // Skip single random characters (not Bengali vowels/consonants or common English words)
+      if (word.length === 1 && !/^[aAiI\u0985-\u0994\u0995-\u09B9০-৯0-9]$/.test(word)) continue;
+      
+      // Skip words that are mostly numbers mixed with random letters (like "1a2b3c")
+      if (/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{4,}$/.test(word) && !/\d{4}/.test(word)) continue;
+      
+      cleanedWords.push(word);
+    }
+    
+    // Only add line if it has meaningful content
+    if (cleanedWords.length > 0) {
+      const cleanedLine = cleanedWords.join(" ");
+      
+      // Final check: line should have at least one proper word (2+ chars)
+      if (cleanedWords.some(w => w.length >= 2)) {
+        cleanedLines.push(cleanedLine);
+      }
+    }
+  }
+  
+  // Step 4: Reconstruct text
+  refined = cleanedLines.join("\n");
+  
+  // Step 5: Final cleanup - fix punctuation spacing
+  refined = refined
+    .replace(/\s+([।,;:!?])/g, "$1") // Remove space before punctuation
+    .replace(/([।,;:!?])([^\s\n।,;:!?])/g, "$1 $2") // Add space after punctuation
+    .replace(/\n{3,}/g, "\n\n") // Max 2 newlines
     .trim();
   
   return refined;
@@ -403,7 +478,7 @@ export default function TryPage() {
     }
   }, [lang]);
 
-  // OCR Processing Function
+  // OCR Processing Function with improved settings
   const processOcr = async (file: File) => {
     setIsOcrProcessing(true);
     setOcrProgress(0);
@@ -411,15 +486,20 @@ export default function TryPage() {
     setOcrText("");
 
     try {
+      // Use improved Tesseract settings for better accuracy
       const result = await Tesseract.recognize(
         file,
-        "ben+eng",
+        "ben+eng", // Bengali + English
         {
           logger: (m) => {
             if (m.status === "recognizing text") {
               setOcrProgress(Math.round(m.progress * 100));
             }
           },
+          // Tesseract parameters for better accuracy
+          tessedit_pageseg_mode: "3", // Fully automatic page segmentation
+          tessedit_ocr_engine_mode: "2", // LSTM neural net mode only
+          preserve_interword_spaces: "1", // Preserve spaces between words
         }
       );
 
@@ -427,7 +507,20 @@ export default function TryPage() {
       
       if (rawText) {
         const refinedText = refineOcrText(rawText);
-        setOcrText(refinedText);
+        
+        // Check if refined text has meaningful content
+        if (refinedText && refinedText.length > 10) {
+          setOcrText(refinedText);
+        } else if (rawText.length > 10) {
+          // If refinement removed too much, show partially cleaned text
+          const partialClean = rawText
+            .replace(/[^\u0980-\u09FF\w\s.,;:!?()-]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+          setOcrText(partialClean || rawText);
+        } else {
+          setOcrError(t.noTextFound);
+        }
       } else {
         setOcrError(t.noTextFound);
       }
