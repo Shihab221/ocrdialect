@@ -13,12 +13,14 @@ const navLinksData = {
   bn: [
     { href: "/", label: "হোম" },
     { href: "/try", label: "চেষ্টা করুন" },
+    { href: "/civic-detector", label: "হটস্পট ডিটেক্টর" },
     { href: "/assistant", label: "AI সহকারী" },
     { href: "/about", label: "আমাদের সম্পর্কে" },
   ],
   en: [
     { href: "/", label: "Home" },
     { href: "/try", label: "Try It" },
+    { href: "/civic-detector", label: "Civic Detector" },
     { href: "/assistant", label: "AI Assistant" },
     { href: "/about", label: "About" },
   ],
