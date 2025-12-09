@@ -1,7 +1,7 @@
 // Environment variables configuration
 export const env = {
   // Gemini API Key
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY || 'AIzaSyCTGkAkIpIp6gXeQHsdK3W1FezTacMpN-0',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY!,
 
   // News API Key (free tier from newsdata.io)
   NEWSDATA_API_KEY: process.env.NEWSDATA_API_KEY || 'pub_61aborepoxoqjvgtx',
