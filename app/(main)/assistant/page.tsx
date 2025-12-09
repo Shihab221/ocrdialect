@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   Send,
   Bot,
@@ -18,6 +19,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { env } from "@/lib/environment";
+
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || "AIzaSyCTGkAkIpIp6gXeQHsdK3W1FezTacMpN-0");
 
 interface Message {
   id: string;
@@ -78,39 +82,13 @@ export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Add welcome message on mount
-  useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: "welcome",
-          role: "assistant",
-          content: t.welcome,
-          timestamp: new Date(),
-        },
-      ]);
-    }
-  }, []);
-
-  // Update welcome message when language changes
-  useEffect(() => {
-    if (messages.length === 1 && messages[0].id === "welcome") {
-      setMessages([
-        {
-          id: "welcome",
-          role: "assistant",
-          content: t.welcome,
-          timestamp: new Date(),
-        },
-      ]);
-    }
-  }, [lang]);
 
   // Scroll to bottom
   const scrollToBottom = () => {
@@ -136,49 +114,47 @@ export default function AssistantPage() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setHasStarted(true);
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAjPKl-F2eCHRFXNt8x8rkETtgSKgJ68j0`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `You are a helpful AI assistant that can communicate in both Bengali and English. The user's current interface language is ${lang === "bn" ? "Bengali" : "English"}. Please respond in the same language the user uses in their message. Be friendly, helpful, and provide detailed answers. If the user writes in Bengali, respond in Bengali. If they write in English, respond in English.\n\nUser message: ${text}`,
-                  },
-                ],
-              },
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 2048,
-            },
-          }),
-        }
-      );
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        systemInstruction: `You are a helpful AI assistant that can communicate in both Bengali and English. The user's current interface language is ${lang === "bn" ? "Bengali" : "English"}. Please respond in the same language the user uses in their message. Be friendly, helpful, and provide detailed answers. If the user writes in Bengali, respond in Bengali. If they write in English, respond in English.`,
+      });
 
-      const data = await response.json();
+      const chatHistory = messages.map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }],
+      }));
 
-      if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: "assistant",
-          content: data.candidates[0].content.parts[0].text,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-      } else {
-        throw new Error("Invalid response");
+      const chat = model.startChat({
+        history: chatHistory,
+        generationConfig: { temperature: 0.8, maxOutputTokens: 2048 },
+      });
+
+      // Add placeholder assistant message
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      const result = await chat.sendMessageStream(text);
+
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        setMessages((prev) => {
+          const updated = [...prev];
+          const lastMessage = updated[updated.length - 1];
+          if (lastMessage.role === "assistant") {
+            lastMessage.content += chunkText;
+          }
+          return updated;
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gemini API Error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -186,7 +162,16 @@ export default function AssistantPage() {
         content: t.errorMessage,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        const lastMessage = updated[updated.length - 1];
+        if (lastMessage.role === "assistant" && lastMessage.content === "") {
+          lastMessage.content = t.errorMessage;
+        } else {
+          updated.push(errorMessage);
+        }
+        return updated;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -326,6 +311,30 @@ export default function AssistantPage() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 custom-scrollbar">
               <AnimatePresence initial={false}>
+                {/* Welcome Message - only show when chat hasn't started */}
+                {!hasStarted && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex gap-3"
+                  >
+                    {/* Avatar */}
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-bangla-purple-500 to-bangla-pink-500">
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+
+                    {/* Message Bubble */}
+                    <div className="max-w-[80%] group">
+                      <div className="px-4 py-3 rounded-2xl inline-block text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-bl-md">
+                        <p className="bangla-text whitespace-pre-wrap leading-relaxed">
+                          {t.welcome}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 {messages.map((message) => (
                   <motion.div
                     key={message.id}
@@ -440,8 +449,8 @@ export default function AssistantPage() {
                 </motion.div>
               )}
 
-              {/* Suggestions - only show when there's just welcome message */}
-              {messages.length === 1 && messages[0].id === "welcome" && !isLoading && (
+              {/* Suggestions - only show when chat hasn't started */}
+              {!hasStarted && !isLoading && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

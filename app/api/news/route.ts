@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "@/lib/environment";
 
 // Civic-related keywords in Bengali and English
 const CIVIC_KEYWORDS = [
@@ -71,7 +72,7 @@ const NEWS_SOURCES = [
 async function fetchFromNewsAPI(): Promise<NewsItem[]> {
   try {
     // Using NewsData.io free tier (you can replace with your API key)
-    const apiKey = process.env.NEWSDATA_API_KEY || "pub_61aborepoxoqjvgtx";
+    const apiKey = env.NEWSDATA_API_KEY;
     const response = await fetch(
       `https://newsdata.io/api/1/news?apikey=${apiKey}&country=bd&language=bn,en&q=dhaka OR road OR traffic OR water`,
       { next: { revalidate: 1800 } } // Cache for 30 minutes
@@ -353,4 +354,5 @@ function getSampleNews(): NewsItem[] {
     },
   ];
 }
+
 
