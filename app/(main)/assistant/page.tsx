@@ -19,9 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
-import { env } from "@/lib/environment";
-
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || "AIzaSyCTGkAkIpIp6gXeQHsdK3W1FezTacMpN-0");
+const genAI = process.env.NEXT_PUBLIC_GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY) : null;
 
 interface Message {
   id: string;
@@ -85,6 +83,7 @@ export default function AssistantPage() {
   const [hasStarted, setHasStarted] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -98,6 +97,7 @@ export default function AssistantPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
 
   // Send message to Gemini API
   const sendMessage = async (messageText?: string) => {
@@ -117,6 +117,10 @@ export default function AssistantPage() {
     setHasStarted(true);
 
     try {
+      if (!genAI) {
+        throw new Error('Gemini API key is not configured. Please check your environment variables.');
+      }
+
       const model = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
         systemInstruction: `You are a helpful AI assistant that can communicate in both Bengali and English. The user's current interface language is ${lang === "bn" ? "Bengali" : "English"}. Please respond in the same language the user uses in their message. Be friendly, helpful, and provide detailed answers. If the user writes in Bengali, respond in Bengali. If they write in English, respond in English.`,
@@ -290,7 +294,7 @@ export default function AssistantPage() {
                     {t.title}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Gemini 2.0 Flash
+                    Gemini 1.5 Flash
                   </p>
                 </div>
               </div>
@@ -486,6 +490,18 @@ export default function AssistantPage() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* API Key Warning */}
+            {apiKeyError && (
+              <div className="px-4 md:px-6 py-3 border-t border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+                <div className="flex items-center gap-2 text-red-700 dark:text-red-300">
+                  <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs text-white">!</span>
+                  </div>
+                  <p className="text-sm">{apiKeyError}</p>
+                </div>
+              </div>
+            )}
+
             {/* Input Area */}
             <div className="px-4 md:px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50">
               <div className="flex items-end gap-3">
@@ -516,7 +532,7 @@ export default function AssistantPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => sendMessage()}
-                  disabled={!input.trim() || isLoading}
+                  disabled={!input.trim() || isLoading || !!apiKeyError}
                   className={cn(
                     "w-12 h-12 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed",
                     input.trim()

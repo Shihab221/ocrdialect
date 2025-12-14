@@ -18,7 +18,7 @@ export function WeatherPanel({ lang, weather }: WeatherPanelProps) {
     <div className="glass-card p-4">
       <h3 className={cn("text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2 mb-3", lang === "bn" && "bangla-text")}>
         <Cloud className="w-4 h-4 text-bangla-purple-500" />
-        {t.weather}
+        {lang === "bn" ? "আবহাওয়া (পরবর্তী ৩ ঘণ্টা)" : "Weather (Next 3 Hours)"}
       </h3>
       <div className="flex items-center justify-between">
         <div>

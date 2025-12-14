@@ -127,19 +127,22 @@ export function useCivicDetector(lang: "bn" | "en") {
   const fetchWeather = useCallback(async (coords: GpsCoordinates) => {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lng}&units=metric&appid=demo&lang=${lang === "bn" ? "bn" : "en"}`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${coords.lat}&lon=${coords.lng}&units=metric&appid=${process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY}&lang=${lang === "bn" ? "bn" : "en"}`
       );
-      
+
       if (response.ok) {
         const data = await response.json();
+        // Use the first forecast entry (next 3 hours)
+        const forecast = data.list[0];
         setWeather({
-          temperature: Math.round(data.main.temp),
-          humidity: data.main.humidity,
-          description: data.weather[0].description,
-          icon: data.weather[0].icon,
-          windSpeed: data.wind.speed,
+          temperature: Math.round(forecast.main.temp),
+          humidity: forecast.main.humidity,
+          description: forecast.weather[0].description,
+          icon: forecast.weather[0].icon,
+          windSpeed: forecast.wind.speed,
         });
       } else {
+        console.error("Weather API error:", response.status, response.statusText);
         setWeather({
           temperature: 28,
           humidity: 75,
@@ -148,7 +151,8 @@ export function useCivicDetector(lang: "bn" | "en") {
           windSpeed: 12,
         });
       }
-    } catch {
+    } catch (error) {
+      console.error("Weather fetch error:", error);
       setWeather({
         temperature: 28,
         humidity: 75,
