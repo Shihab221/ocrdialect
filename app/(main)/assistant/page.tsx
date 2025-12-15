@@ -1,5 +1,54 @@
 "use client";
 
+// Web Speech API declarations
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  maxAlternatives: number;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -16,6 +65,9 @@ import {
   Lightbulb,
   Volume2,
   VolumeX,
+  Mic,
+  MicOff,
+  Square,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
@@ -49,6 +101,10 @@ const translations = {
     errorMessage: "দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।",
     listen: "শুনুন",
     stop: "থামান",
+    voiceInput: "ভয়েস ইনপুট",
+    listening: "শুনছি...",
+    processing: "প্রসেস করছি...",
+    cancel: "বাতিল",
   },
   en: {
     title: "AI Assistant",
@@ -70,6 +126,10 @@ const translations = {
     errorMessage: "Sorry, something went wrong. Please try again.",
     listen: "Listen",
     stop: "Stop",
+    voiceInput: "Voice Input",
+    listening: "Listening...",
+    processing: "Processing...",
+    cancel: "Cancel",
   },
 };
 
@@ -84,6 +144,14 @@ export default function AssistantPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
+  const [processingSpeech, setProcessingSpeech] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const finalTranscriptRef = useRef("");
+  const speechTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -97,6 +165,18 @@ export default function AssistantPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Cleanup voice recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+      if (speechTimeoutRef.current) {
+        clearTimeout(speechTimeoutRef.current);
+      }
+    };
+  }, []);
 
 
   // Send message to Gemini API
@@ -227,6 +307,141 @@ export default function AssistantPage() {
   // Handle suggestion click
   const handleSuggestion = (suggestion: string) => {
     sendMessage(suggestion);
+  };
+
+  // Voice recognition functions
+  const startVoiceRecognition = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert(lang === "bn" ? "আপনার ব্রাউজার ভয়েস রেকগনিশন সমর্থন করে না।" : "Your browser doesn't support voice recognition.");
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = true;
+    recognitionRef.current.lang = lang === "bn" ? "bn-BD" : "en-US";
+    recognitionRef.current.maxAlternatives = 1;
+
+    recognitionRef.current.onstart = () => {
+      setIsListening(true);
+      setIsRecording(true);
+      setTranscript("");
+      setInterimTranscript("");
+      finalTranscriptRef.current = "";
+      if (speechTimeoutRef.current) {
+        clearTimeout(speechTimeoutRef.current);
+      }
+    };
+
+    recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+      let finalTranscript = "";
+      let interimTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      // Update display
+      setTranscript(prev => prev + finalTranscript);
+      setInterimTranscript(interimTranscript);
+
+      // Accumulate final results
+      if (finalTranscript) {
+        finalTranscriptRef.current += finalTranscript;
+
+        // Clear any existing timeout
+        if (speechTimeoutRef.current) {
+          clearTimeout(speechTimeoutRef.current);
+        }
+
+        // Set a new timeout to wait for user to finish speaking
+        setProcessingSpeech(true);
+        speechTimeoutRef.current = setTimeout(() => {
+          const completeTranscript = finalTranscriptRef.current.trim();
+          if (completeTranscript) {
+            setIsListening(false);
+            setIsRecording(false);
+            setTranscript("");
+            setInterimTranscript("");
+            setProcessingSpeech(false);
+            sendMessage(completeTranscript);
+            finalTranscriptRef.current = "";
+          } else {
+            setProcessingSpeech(false);
+          }
+        }, 2500); // Wait 2.5 seconds after last final result
+      }
+    };
+
+    recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error("Speech recognition error:", event.error);
+      setIsListening(false);
+      setIsRecording(false);
+      setProcessingSpeech(false);
+      setTranscript("");
+      setInterimTranscript("");
+      finalTranscriptRef.current = "";
+      if (speechTimeoutRef.current) {
+        clearTimeout(speechTimeoutRef.current);
+      }
+    };
+
+    recognitionRef.current.onend = () => {
+      setIsListening(false);
+      setIsRecording(false);
+      setProcessingSpeech(false);
+
+      // Clear any pending timeout
+      if (speechTimeoutRef.current) {
+        clearTimeout(speechTimeoutRef.current);
+      }
+
+      // If we have accumulated transcript, send it immediately
+      const completeTranscript = finalTranscriptRef.current.trim();
+      if (completeTranscript) {
+        sendMessage(completeTranscript);
+        finalTranscriptRef.current = "";
+      }
+
+      setTranscript("");
+      setInterimTranscript("");
+    };
+
+    recognitionRef.current.start();
+  };
+
+  const stopVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    if (speechTimeoutRef.current) {
+      clearTimeout(speechTimeoutRef.current);
+    }
+    setIsListening(false);
+    setIsRecording(false);
+    setProcessingSpeech(false);
+  };
+
+  const cancelVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+    }
+    if (speechTimeoutRef.current) {
+      clearTimeout(speechTimeoutRef.current);
+    }
+    setIsListening(false);
+    setIsRecording(false);
+    setProcessingSpeech(false);
+    setTranscript("");
+    setInterimTranscript("");
+    finalTranscriptRef.current = "";
   };
 
   return (
@@ -502,6 +717,69 @@ export default function AssistantPage() {
               </div>
             )}
 
+            {/* Voice Recording Overlay */}
+            <AnimatePresence>
+              {(isListening || processingSpeech) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className={cn(
+                    "px-4 md:px-6 py-4 border-t",
+                    processingSpeech
+                      ? "border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20"
+                      : "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/20"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
+                        "w-3 h-3 rounded-full animate-pulse",
+                        processingSpeech ? "bg-blue-500" : "bg-red-500"
+                      )} />
+                      <span className={cn(
+                        "font-medium",
+                        processingSpeech
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-red-600 dark:text-red-400",
+                        lang === "bn" && "bangla-text"
+                      )}>
+                        {processingSpeech ? t.processing : t.listening}
+                      </span>
+                    </div>
+                    <div className="flex-1 text-sm text-slate-600 dark:text-slate-400">
+                      {transcript && (
+                        <span className={cn(lang === "bn" && "bangla-text")}>
+                          "{transcript}"
+                        </span>
+                      )}
+                      {interimTranscript && (
+                        <span className={cn("opacity-70", lang === "bn" && "bangla-text")}>
+                          {interimTranscript}
+                        </span>
+                      )}
+                      {processingSpeech && !transcript && (
+                        <span className={cn("text-blue-600 dark:text-blue-400", lang === "bn" && "bangla-text")}>
+                          {lang === "bn" ? "আপনার কথা প্রসেস করা হচ্ছে..." : "Processing your speech..."}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={cancelVoiceRecognition}
+                      className={cn(
+                        "px-3 py-1 text-xs text-white rounded-lg transition-colors",
+                        processingSpeech
+                          ? "bg-blue-500 hover:bg-blue-600"
+                          : "bg-red-500 hover:bg-red-600"
+                      )}
+                    >
+                      {t.cancel}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Input Area */}
             <div className="px-4 md:px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50">
               <div className="flex items-end gap-3">
@@ -528,6 +806,24 @@ export default function AssistantPage() {
                     }}
                   />
                 </div>
+                {/* Voice Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={isListening ? stopVoiceRecognition : startVoiceRecognition}
+                  disabled={isLoading || !!apiKeyError}
+                  className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+                    isListening
+                      ? "bg-red-500 text-white shadow-lg animate-pulse"
+                      : "bg-gradient-to-br from-bangla-pink-500 to-bangla-purple-500 text-white shadow-lg"
+                  )}
+                  title={t.voiceInput}
+                >
+                  {isListening ? <Square className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </motion.button>
+
+                {/* Send Button */}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

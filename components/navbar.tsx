@@ -67,7 +67,7 @@ export function Navbar() {
               lang === "bn" && "bangla-text"
             )}>
               {lang === "bn" ? "বাংলা বলে" : "Bangla Bole"}
-            </span>
+              </span>
           </Link>
 
           {/* Desktop Navigation */}
